@@ -5,16 +5,16 @@
 ```
 # return list of demos
 demos()
-```
-
-```
 # return list of built-in datasets
 data()
-```
-
-```
 # access built-in dataset by its name
 mtcars
+```
+
+Change working directory on startup
+
+```
+> setwd("/workspace/data")
 ```
 
 ## JupyterLab
