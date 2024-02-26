@@ -11,21 +11,31 @@ data()
 mtcars
 ```
 
-Change working directory on startup
+Load JSON lib, change working directory on startup, read CSV to data frame, export data frame to JSON file
 
 ```
-> setwd("/workspace/data")
+install.packages("RJSONIO")
+library(RJSONIO)
+setwd("/workspace/data")
+df <- read.csv("input/2024-01-16/polling_places.csv")
+exportJson <- toJSON(df)
+write(exportJson, "output/output.json")
 ```
 
 ## JupyterLab
+
+Install all the relevant packages
 
 ```
 !pip install pandas[pyarrow] jupytext scipy jupyterlab-git qgrid seaborn nb_black
 ```
 
+Read CSV to data frame, export data frame to JSON file
 ```
 import pandas as pd
-pd.read_csv('2024-01-16/polling_places.csv', low_memory=False)
+df = pd.read_csv('2024-01-16/polling_places.csv', low_memory=False)
+df
+df.to_json('output.json')
 ```
 
 ## VSCode
