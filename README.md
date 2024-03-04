@@ -2,7 +2,7 @@
 
 ## RStudio
 
-```
+```R
 install.packages("dplyr")
 install.packages("gapminder")
 install.packages("ggplot2")
