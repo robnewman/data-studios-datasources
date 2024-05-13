@@ -2,6 +2,81 @@
 
 ## RStudio
 
+### Example 1 - RNASeq
+
+```R
+# Adapted from source: https://combine-australia.github.io/RNAseq-R/09-applying-rnaseq-solutions.html
+
+install.packages("BiocManager")
+BiocManager::install(c("limma"))
+BiocManager::install(c("edgeR"))
+BiocManager::install(c("org.Dm.eg.db"))
+BiocManager::install(c("gplots"))
+BiocManager::install(c("RColorBrewer"))
+library(limma)
+library(edgeR)
+library(gplots)
+library(RColorBrewer)
+library(org.Dm.eg.db)
+
+counts <- read.delim(file="/workspace/data/datastudios-demo-rstudio/input/2024-05-13/counts_Drosophila.txt")
+targets <- read.delim(file="/workspace/data/datastudios-demo-rstudio/input/2024-05-13/SampleInfo_Drosophila.txt")
+head(counts)
+targets
+table(targets$Group)
+mycpm <- cpm(counts)
+plot(counts[,1],mycpm[,1],xlim=c(0,20),ylim=c(0,5))
+abline(v=10,col=2)
+abline(h=2,col=4)
+thresh <- mycpm > 2
+keep <- rowSums(thresh) >= 3
+table(keep)
+counts.keep <- counts[keep,]
+dim(counts.keep)
+y <- DGEList(counts.keep)
+barplot(y$samples$lib.size)
+
+par(mfrow=c(1,1))
+# Get log2 counts per million
+logcpm <- cpm(y$counts,log=TRUE)
+# Check distributions of samples using boxplots
+boxplot(logcpm, xlab="", ylab="Log2 counts per million",las=2,outline=FALSE)
+# Let's add a blue horizontal line that corresponds to the median logCPM
+abline(h=median(logcpm),col="blue")
+title("Boxplots of logCPMs (unnormalised)")
+
+par(mfrow=c(1,2),oma=c(2,0,0,0))
+group.col <- c("red","blue")[targets$Group]
+boxplot(logcpm, xlab="", ylab="Log2 counts per million",las=2,col=group.col,
+        pars=list(cex.lab=0.8,cex.axis=0.8))
+abline(h=median(logcpm),col="blue")
+title("Boxplots of logCPMs\n(coloured by groups)",cex.main=0.8)
+
+lib.col <- c("light pink","light green")[targets$Library]
+boxplot(logcpm, xlab="", ylab="Log2 counts per million",las=2, col=lib.col,
+        pars=list(cex.lab=0.8,cex.axis=0.8))
+abline(h=median(logcpm),col="blue")
+title("Boxplots of logCPMs\n(coloured by library prep)",cex.main=0.8)
+
+par(mfrow=c(1,2))
+plotMDS(y,col=group.col)
+legend("topright",legend=levels(targets$Group),fill=c("red","blue"))
+plotMDS(y,col=lib.col)
+legend("topleft",legend=levels(targets$Library),fill=c("light pink","light green"))
+
+logcounts <- cpm(y,log=TRUE)
+var_genes <- apply(logcounts, 1, var)
+select_var <- names(sort(var_genes, decreasing=TRUE))[1:500]
+
+highly_variable_lcpm <- logcounts[select_var,]
+dim(highly_variable_lcpm)
+mypalette <- brewer.pal(11,"RdYlBu")
+morecols <- colorRampPalette(mypalette)
+heatmap.2(highly_variable_lcpm,col=rev(morecols(50)),trace="none", main="Top 500 most variable genes across samples",ColSideColors=group.col,scale="row",margins=c(10,5))
+```
+
+### Example 2 - Shiny
+
 ```R
 install.packages("dplyr")
 install.packages("gapminder")
