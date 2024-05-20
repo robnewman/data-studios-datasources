@@ -156,7 +156,82 @@ server <- function(input, output, session) {
 shinyApp(ui = ui, server = server)
 ```
 
-Load JSON lib, change working directory on startup, read CSV to data frame, export data frame to JSON file
+### Example 3 - Volcano Plot using Shiny
+
+```R
+install.packages("shiny")
+install.packages("plotly")
+install.packages("tidyverse")
+
+library(shiny)
+library(plotly)
+library(tidyverse)
+
+ui <- fluidPage(
+  titlePanel("Volcano Plotly"),
+  fluidRow(
+    column(
+      width = 7,
+      plotlyOutput("volcanoPlot", height = "500px")
+    ),
+    column(
+      width = 5,
+      dataTableOutput("selectedProbesTable")
+    )
+  )
+)
+
+server <- function(input, output) {
+
+  differentialExpressionResults <-
+    read.csv("NKI-DE-results.csv", stringsAsFactors = FALSE) %>%
+    mutate(
+      probe.type = factor(ifelse(grepl("^Contig", probe), "EST", "mRNA")),
+      minusLog10Pvalue = -log10(adj.P.Val),
+      tooltip = ifelse(is.na(HUGO.gene.symbol), probe, paste(HUGO.gene.symbol, " (", probe, ")", sep = ""))
+    ) %>%
+    sample_n(1000)
+
+  output$volcanoPlot <- renderPlotly({
+
+    plot <- differentialExpressionResults %>%
+      ggplot(aes(x = logFC,
+                 y = minusLog10Pvalue,
+                 colour = probe.type,
+                 text = tooltip,
+                 key = row.names(differentialExpressionResults))) +
+      geom_point() +
+      xlab("log fold change") +
+      ylab("-log10(P-value)")
+
+    plot %>%
+      ggplotly(tooltip = "tooltip") %>%
+      layout(dragmode = "select")
+  })
+
+  output$selectedProbesTable <- renderDataTable({
+
+    eventData <- event_data("plotly_selected")
+
+    selectedData <- differentialExpressionResults %>% slice(0)
+    if (!is.null(eventData)) selectedData <- differentialExpressionResults[eventData$key,]
+
+    selectedData %>%
+      transmute(
+        probe,
+        gene = HUGO.gene.symbol,
+        `log fold change` = signif(logFC, digits = 2),
+        `p-value` = signif(adj.P.Val, digits = 2)
+      )
+  },
+    options = list(dom = "tip", pageLength = 10, searching = FALSE)
+  )
+}
+
+shinyApp(ui, server, options = list(height = 600))
+```
+
+### Example 4 - Load JSON lib, change working directory on startup, read CSV to data frame, export data frame to JSON file
 
 ```
 install.packages("RJSONIO")
