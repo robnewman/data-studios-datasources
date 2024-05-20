@@ -181,6 +181,8 @@ ui <- fluidPage(
   )
 )
 
+csv_file = "/workspace/data/datastudios-demo-rstudio/input/2024-05-20_volcano-examples/NKI-DE-results.csv"
+
 server <- function(input, output) {
 
   differentialExpressionResults <-
