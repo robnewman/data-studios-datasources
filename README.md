@@ -186,7 +186,7 @@ csv_file = "/workspace/data/datastudios-demo-rstudio/input/2024-05-20_volcano-ex
 server <- function(input, output) {
 
   differentialExpressionResults <-
-    read.csv("NKI-DE-results.csv", stringsAsFactors = FALSE) %>%
+    read.csv(csv_file, stringsAsFactors = FALSE) %>%
     mutate(
       probe.type = factor(ifelse(grepl("^Contig", probe), "EST", "mRNA")),
       minusLog10Pvalue = -log10(adj.P.Val),
