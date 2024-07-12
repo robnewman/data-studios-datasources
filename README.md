@@ -4,6 +4,8 @@
 
 ### Example 1 - RNASeq
 
+Note that the CSV file paths may be different for you.
+
 ```R
 # Adapted from source: https://combine-australia.github.io/RNAseq-R/09-applying-rnaseq-solutions.html
 
@@ -158,6 +160,8 @@ shinyApp(ui = ui, server = server)
 
 ### Example 3 - Volcano Plot using Shiny
 
+Note that the CSV file path may be different for you.
+
 ```R
 install.packages("shiny")
 install.packages("plotly")
@@ -235,7 +239,9 @@ shinyApp(ui, server, options = list(height = 600))
 
 ### Example 4 - Load JSON lib, change working directory on startup, read CSV to data frame, export data frame to JSON file
 
-```
+Note that the CSV file path may be different for you.
+
+```R
 install.packages("RJSONIO")
 library(RJSONIO)
 setwd("/workspace/data")
@@ -246,14 +252,17 @@ write(exportJson, "output/output.json")
 
 ## JupyterLab
 
-Install all the relevant packages
+### Example 1 - Install additonal packages
 
-```
+```python
 !pip install pandas[pyarrow] jupytext scipy jupyterlab-git qgrid seaborn nb_black
 ```
 
-Read CSV to data frame, export data frame to JSON file
-```
+### Example 2 - Read CSV to data frame, export data frame to JSON file
+
+Note that the CSV file path may be different for you.
+
+```python
 import pandas as pd
 df = pd.read_csv('2024-01-16/polling_places.csv', low_memory=False)
 df
