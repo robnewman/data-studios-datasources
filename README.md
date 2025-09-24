@@ -269,6 +269,33 @@ df
 df.to_json('output.json')
 ```
 
+### Example 3 - Use IGV
+
+Add the following customization via the Conda packages field
+
+```bash
+channels:
+  - conda-forge
+dependencies:
+  - ipyigv
+```
+
+Then when the session has launched, add the following Python code.
+
+```python
+from ipyigv import IgvBrowser as Browser, PUBLIC_GENOMES
+from ipyigv.options import ReferenceGenome, Track
+
+genome = ReferenceGenome(**PUBLIC_GENOMES.hg38)
+
+browser = Browser(genome=genome)
+browser
+```
+
+You will see the following:
+
+<img width="2862" height="998" alt="CleanShot 2025-09-24 at 14 36 41@2x" src="https://github.com/user-attachments/assets/ad3b68b8-43fa-46ea-8b35-ccec0e8ff04a" />
+
 ## VSCode
 
 TBD
